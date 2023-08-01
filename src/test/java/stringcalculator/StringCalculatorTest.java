@@ -1,15 +1,12 @@
 package stringcalculator;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.*;
@@ -60,28 +57,6 @@ public class StringCalculatorTest {
         sc = new StringCalculator();
     }
 
-    @ParameterizedTest
-    @DisplayName("잘못된_Input_검증하기_null")
-    @NullAndEmptySource
-    void nullInputValidate(String wrongInput) {
-        assertThatThrownBy(() -> sc.execute(wrongInput))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("공백_기준으로_문자열_나누기")
-    void inputIntoStrings() {
-        assertThat(strings).containsExactly("2", "+", "3", "+", "5");
-    }
-
-    @ParameterizedTest
-    @DisplayName("ValueSource_응용")
-    @ValueSource( strings = { " ", "1 + 8 / 1", "1 + 4 * 7", "1 - 6 - 9 + 19"})
-    void appliedValueSource(String s) {
-        int result = sc.execute(s);
-        System.out.println("result = " + result);
-    }
-
     @Test
     @DisplayName("Regex_API_테스트하기")
     void checkRegexByPatternMatches() {
@@ -89,6 +64,67 @@ public class StringCalculatorTest {
         String input = " 19 22 1";
 
         assertTrue(Pattern.matches(regex, "20"));
+    }
+
+    @ParameterizedTest
+    @DisplayName("잘못된_Input_검증하기_null")
+    @NullAndEmptySource
+    void nullInputValidateV1(String wrongInput) {
+        assertThatThrownBy(() -> sc.execute(wrongInput))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @DisplayName("IllegalArgumentException_확인하기")
+    @NullAndEmptySource
+    void checkIllegalArgumentException(String wrongInput) {
+        assertThatIllegalArgumentException().isThrownBy(() -> sc.execute(wrongInput));
+    }
+
+    @ParameterizedTest
+    @DisplayName("ValueSource_응용_올바른_문자열")
+    @ValueSource( strings = { " ", "1 + 8 / 3", "1 + 4 * 7", "1 - 6 - 9 + 19"})
+    void appliedValueSource(String s) {
+        int result = sc.execute(s);
+        System.out.println("result = " + result);
+    }
+
+
+
+    @ParameterizedTest
+    @DisplayName("사칙연산이_아닌_문자_등장한_경우")
+    @ValueSource( strings = { "1 & 8 # 3", "1 + 4 @ 7", "1 - 6 - 9 ) 19"})
+    void wrongOperatorThenException(String s) {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> sc.execute(s)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("연속된_연산자_등장")
+    @ValueSource( strings = { "1 & # 3", "1 + @ 7", "1 - - ) 19"})
+    void continueOperatorThenException(String s) {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> sc.execute(s)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("연속된_피연산자_등장")
+    @ValueSource( strings = { "1 8 # 3", "1 4 @ 7", "1 - 6 - 9 19"})
+    void wrongOperandThenException(String s) {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> sc.execute(s)
+        );
+    }
+
+    @ParameterizedTest
+    @DisplayName("공백_무시한_입력값")
+    @ValueSource( strings = { "1 8# 3", "1 4@ 7", "1 -6 -9 +19"})
+    void wrongInputWithWrongSpaces(String s) {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> sc.execute(s)
+        );
     }
 
 
