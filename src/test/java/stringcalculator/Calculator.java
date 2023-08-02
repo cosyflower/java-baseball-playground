@@ -36,6 +36,5 @@ public class Calculator {
         }
 
         currentOperator = Operator.findOperator(s);
-//        System.out.println("currentOperator = " + currentOperator); - debug
     }
 }

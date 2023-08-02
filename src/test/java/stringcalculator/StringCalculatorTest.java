@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -126,6 +127,16 @@ public class StringCalculatorTest {
                 () -> sc.execute(s)
         );
     }
+
+    @ParameterizedTest
+    @DisplayName("공백_무시한_입력값")
+    @CsvSource( value = {" 1 + 2 - 3 : 0", " 2 + 4 * 2 / 1 : 12", " 2 - 9 * 10 : 2"},
+                delimiter = ':')
+    void checkResult(String s, int result) {
+        assertThat(sc.execute(s)).isEqualTo(result);
+    }
+
+
 
 
 

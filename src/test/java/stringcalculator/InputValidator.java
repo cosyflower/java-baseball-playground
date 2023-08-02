@@ -3,15 +3,17 @@ package stringcalculator;
 import stringcalculator.operator.Operator;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InputValidator {
     // input 관련 검증을 진행하는 유틸리티 클래스의 역할
     // Input 관련 발생 가능한 예외 관련 처리를 해주는 유틸리티 클래스
-    static final String regex = "^[0-9]*$";
+//    static final String regex = "^[0-9]*$";
+    private static final Pattern PATTERN = Pattern.compile("^[0-9]*$");
 
     private Boolean isOperatorV1(String input) { // 연산자인지 확인합니다
-       String[] operationType = new String[]{"+", "-", "/", "*"};
+        String[] operationType = new String[]{"+", "-", "/", "*"};
         for (String s : operationType) {
             if (input.equals(s)) {
                 return true;
@@ -22,7 +24,7 @@ public class InputValidator {
 
     private Boolean isOperatorV2(String input) { // 연산자인지 확인합니다
         for (Operator value : Operator.values()) {
-            if(input.equals(value.getOp())) {
+            if (input.equals(value.getOp())) {
                 return true;
             }
         }
@@ -31,7 +33,7 @@ public class InputValidator {
 
     private Boolean isOperatorV3(String input) { // 연산자인지 확인합니다
         Operator foundOperator = Operator.findOperator(input);
-        if( foundOperator == null ) {
+        if (foundOperator == null) {
             throw new IllegalArgumentException();
         }
         return true;
@@ -60,16 +62,26 @@ public class InputValidator {
 
     // Operand 구별하는 또 다른 방법(정규표현식 활용하는 방식)
     public boolean defineOperand(String input) {
-
-        if(Pattern.matches(regex, input)) {
+        Matcher matcher = PATTERN.matcher(input);
+        if (matcher.matches()) {
             return true;
         }
         return false;
     }
 
-    public Boolean isOperand(String input) { // 피연산자인지 확인합니다
-        String regex = "^[0-9]*$";
-        if(Pattern.matches(regex, input)) {
+    public Boolean isOperandV2(String input) { // 피연산자인지 확인합니다
+        Matcher matcher = PATTERN.matcher(input);
+        if (matcher.matches()) {
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean isOperand(String input) {
+        // 피연산자인지 확인합니다
+        // Pattern.compile("정규표현식')은 상수로 표현해주세요!
+        Matcher matcher = PATTERN.matcher(input);
+        if (matcher.matches()) {
             return true;
         }
         return false;
@@ -83,7 +95,7 @@ public class InputValidator {
         }
 
         // 먼저 공백을 기준으로 문자열들을 구분을 해둔 상황에서
-        String[] inputs = new Formula(s).splitInput();
+        String[] inputs = new Formula(s).getFormula();
 
         // 공백 규칙을 지키지 아니한 경우
         // 공백 기준으로 나누되 순서로 접근하는 방향이 제일 좋을 듯 하다 ( 1, 3, 5,, 홀수 index에 operator가 위치해야 하므로)

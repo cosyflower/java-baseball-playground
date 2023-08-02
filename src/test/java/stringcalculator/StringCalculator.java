@@ -19,7 +19,7 @@ public class StringCalculator {
         }
 
         // 검증 완료된 문자열이라면
-        return calculator.calculate(new Formula(s).splitInput());
+        return calculator.calculate(new Formula(s).getFormula());
     }
 
 }

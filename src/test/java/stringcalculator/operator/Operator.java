@@ -9,13 +9,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Operator {
+
     PLUS("+", (first, second) -> first + second),
     MINUS("-", (first, second) -> first - second),
 
     DIVIDE("/", (first, second) -> { if(second == 0) {
         throw new IllegalArgumentException(); }
-        return (first / second); } ),
+        return (first / second);} ),
     MULTIPLY("*", (first, second) -> first * second);
+
+    private static final Map<String, Operator> DESCRIPTIONS = Collections.unmodifiableMap(Stream.of(values())
+            .collect(Collectors.toMap(Operator::getOp, Function.identity())));
 
     private String op;
     private BiFunction<Integer, Integer, Integer> biFunction;
@@ -25,6 +29,11 @@ public enum Operator {
         this.biFunction = biFunction;
     }
 
+    public static Operator findOperator(String s) {
+        // Operator 찾는 과정에서 존재하지 않는 연산자 오버로딩 처리
+        return Optional.ofNullable(DESCRIPTIONS.get(s)).orElseThrow(() -> new IllegalArgumentException());
+    }
+
     public String getOp() {
         return op;
     }
@@ -32,14 +41,4 @@ public enum Operator {
     public Integer operate(int result, int number) {
         return biFunction.apply(result, number);
     }
-
-    private static final Map<String, Operator> descriptions = Collections.unmodifiableMap(Stream.of(values())
-            .collect(Collectors.toMap(Operator::getOp, Function.identity())));
-
-    public static Operator findOperator(String s) {
-        // Operator 찾는 과정에서 존재하지 않는 연산자 오버로딩 처리
-        return Optional.ofNullable(descriptions.get(s)).orElseThrow(() -> new IllegalArgumentException());
-    }
-
-
 }

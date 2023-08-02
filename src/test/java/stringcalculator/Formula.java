@@ -6,13 +6,14 @@ package stringcalculator;
 
 public class Formula {
     // .getLine()을 통해서 입력받은 문자열을 저장할 수 있는 formula
-    private String input;
+    private static final String regex = " ";
+    private String[] inputs;
 
     public Formula(String input) {
-        this.input = input;
+        this.inputs = input.split(regex);
     }
 
-    String[] splitInput() {
-        return input.split(" ");
+    public String[] getFormula() {
+        return inputs;
     }
 }
